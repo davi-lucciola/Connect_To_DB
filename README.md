@@ -9,7 +9,5 @@ the idea is create an object with atributes:
 - table (current)
 - all tables in db connected
 
-<tr>
-
 ## config archive
 an module with functions to create the configs archives
