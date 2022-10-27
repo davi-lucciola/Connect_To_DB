@@ -1,11 +1,8 @@
 '''
-class -> ConnectToDb:
-Esta classe devolve um objeto conectado no banco com os seguintes atributos
+An class to make connection with db.
 
-- conx = Conexão com o Banco
-- cursor = Cursor
-- table = Tabela atual
-- tables = Todas as tabelas no Banco
+class:
+    ConnectToDb
 '''
 import mysql.connector as mysql
 from dotenv import load_dotenv
@@ -13,19 +10,32 @@ from os import getenv
 from config_archive import config_archive
 
 class ConnectToDb:
-    def __init__(self, database:str, table: str = '', host: str = '127.0.0.1',user:str = 'root', port:str = '3306',password: str= '', auto_commit: bool = True, db_config_path:str = 'env') -> None:
+    def __init__(self, database:str, table: str = '', host: str = '127.0.0.1',user:str = 'root', port:str = '3306',password: str= '', db_config_path:str = 'env') -> None:
         '''
+        An class to make connection with db.
+        This class are made to be inherited, and in this new class config all CRUD methods 
+
+        Instance Parameters:
+            - db_config_path (str): path where the archive will be created
+            - database (str): the database you will connect
+            - host (str): host where your database is
+            - port (str): the connection port
+            - user (str): user you will log in db
+            - passwd (str): your user password to log in db 
+
         Atributes:
-        - conx
-        - cursor
-        - table
-        - tables
+            - conx (MySQLConnection): connection with mysql
+            - cursor (CursorBase): cursor for execute sql commands
+            - table (str): table for apply sql commands
+            - tables (list): list with all tables on DB
         '''
-        # Carregando o arquivo plano de configuração
-        config_archive(db_config_path, host, user, port, password, database)
+        # Creating the plan config archive
+        config_archive(database, db_config_path, host, port, user, password)
+
+        # Loading all amb variables
         load_dotenv(db_config_path)
         
-        # Conectando ao banco
+        # Connecting to database and MYSQL
         try:
             self.__conx = mysql.connect(
                 host=getenv('HOST'),
@@ -34,36 +44,31 @@ class ConnectToDb:
                 passwd=getenv('PASSWD'),
                 db=getenv('DB')
             )
-            print('Conectado ao banco com sucesso!')
+            print('Connected to DB successfully!')
         except Exception as err:
-            raise err('Houve um erro ao se conectar no banco!')
+            raise err('There was an error connecting to the database!')
         else:
             self.__cursor = self.conx.cursor()
             self.__table = table
             self.__tables: list = self.tables_on_bd()
-            self.__auto_commit: bool = auto_commit
         
-    def tables_on_bd(self): 
-        self.cursor.execute('SHOW TABLES')
+    def tables_on_bd(self) -> list: 
+        self.cursor.execute('SHOW TABLES;')
         all_tables = [table[0] for table in self.cursor.fetchall()]
         return all_tables
     
-    # Metodos na conexão
-    def close(self):
+    # Connection methods
+    def close(self) -> None:
         self.conx.close()
 
-    def commit(self):
+    def commit(self) -> None:
         self.conx.commit()
-    
-    def auto_commiting(self):
-        if self.auto_commit:
-            self.commit()
 
-    def rollback(self):
+    def rollback(self) -> None:
         self.conx.rollback()
 
-    # Metodos de verificação
-    def __testing_table(self, table):
+    # Verification methods
+    def __testing_table(self, table) -> str:
         if (table in self.tables) or (table is None):
             return table
         else:
@@ -85,16 +90,12 @@ class ConnectToDb:
     @property
     def tables(self):
         return self.__tables
-
-    @property
-    def auto_commit(self):
-        return self.__auto_commit
     
     # Setters
     @table.setter
-    def table(self, table):
+    def table(self, table) -> None:
         self.__testing_table(table)
-        print('Tabela alterada com sucesso!')
+        print('Your table are changed successfully!')
         self.__table = table
 
 
