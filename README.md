@@ -18,5 +18,16 @@ This class are made to be inherited, and in this new class config all CRUD metho
             - table (str): table for apply sql commands
             - tables (list): list with all tables on DB
 
-## config archive
+## config_archive.py
 an module with functions to create the configs archives
+    '''
+        This function create an plan archive with all info you need to connect to your DataBase.
+
+        Parameters:
+            - db_config_path (str): path where the archive will be created
+            - database (str): the database you will connect
+            - host (str): host where your database is
+            - port (str): the connection port
+            - user (str): user you will log in db
+            - passwd (str): your user password to log in db 
+    '''
