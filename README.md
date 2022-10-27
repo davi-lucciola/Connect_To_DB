@@ -20,7 +20,7 @@ This class are made to be inherited, and in this new class config all CRUD metho
 
 ## config_archive.py
 an module with functions to create the configs archives
-    '''
+
         This function create an plan archive with all info you need to connect to your DataBase.
 
         Parameters:
@@ -29,5 +29,4 @@ an module with functions to create the configs archives
             - host (str): host where your database is
             - port (str): the connection port
             - user (str): user you will log in db
-            - passwd (str): your user password to log in db 
-    '''
+            - passwd (str): your user password to log in db
