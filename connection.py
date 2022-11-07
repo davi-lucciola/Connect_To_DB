@@ -7,12 +7,12 @@ class:
 import mysql.connector as mysql
 from dotenv import load_dotenv
 from os import getenv
-from config_archive import config_archive
+from config.config_archive import config_archive
 
 class ConnectToDb:
     def __init__(self, database:str, table: str = '', host: str = '127.0.0.1',user:str = 'root', port:str = '3306',password: str= '', db_config_path:str = 'env') -> None:
         '''
-        An class to make connection with db.
+        A class to make connection with db.
         This class are made to be inherited, and in this new class config all CRUD methods 
 
         Instance Parameters:
@@ -39,12 +39,11 @@ class ConnectToDb:
         try:
             self.__conx = mysql.connect(
                 host=getenv('HOST'),
-                port=int(getenv('PORT')),
+                port=getenv('PORT'),
                 user=getenv('USER_DB'),
                 passwd=getenv('PASSWD'),
                 db=getenv('DB')
             )
-            print('Connected to DB successfully!')
         except Exception as err:
             raise err('There was an error connecting to the database!')
         else:
@@ -57,6 +56,15 @@ class ConnectToDb:
         all_tables = [table[0] for table in self.cursor.fetchall()]
         return all_tables
     
+    def select_all():
+        try:
+            self.cursor.execute(f'SELECT * FROM {self.table};')
+        except Exeption as err:
+            raise err('It was´t possible to select this table'):
+        else:
+            all_table = self.cursor.fetchall()
+            return all_table
+    
     # Connection methods
     def close(self) -> None:
         self.conx.close()
@@ -66,6 +74,16 @@ class ConnectToDb:
 
     def rollback(self) -> None:
         self.conx.rollback()
+    
+    def execute(self, sql_query) -> bool:
+        try:
+            self.cursor.execute(sql_query)
+        except:
+            self.rollback()
+            return False
+        else:
+            self.commit()
+            return True
 
     # Verification methods
     def __testing_table(self, table) -> str:
